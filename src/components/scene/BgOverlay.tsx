@@ -10,10 +10,10 @@ export const BgOverlay = () => {
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 0,
+        zIndex: 1,
         pointerEvents: 'none',
         background: activeProject?.accent ?? 'transparent',
-        opacity: activeSlug ? 0.04 : 0,
+        opacity: activeSlug ? 0.05 : 0,
         transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), background 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     />
