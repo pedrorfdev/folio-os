@@ -1,6 +1,11 @@
 import { RouterProvider } from '@tanstack/react-router'
+import { useMousePosition } from './hooks/useMousePosition'
 import { router } from './router'
 
-export const App = () => {
+
+const AppInner = () => {
+  useMousePosition()
   return <RouterProvider router={router} />
 }
+
+export const App = () => <AppInner />
