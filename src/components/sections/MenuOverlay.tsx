@@ -17,12 +17,10 @@ export const MenuOverlay = () => {
         zIndex: 200,
         display: 'grid',
         gridTemplateColumns: '1fr 2fr 1fr',
-        opacity: menuOpen ? 1 : 0,
         pointerEvents: menuOpen ? 'auto' : 'none',
-        transition: 'opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
-      {/* Coluna esquerda — offwhite, navegação */}
+      {/* Coluna esquerda — entra da esquerda */}
       <div
         style={{
           background: '#f0ede8',
@@ -30,8 +28,8 @@ export const MenuOverlay = () => {
           display: 'flex',
           flexDirection: 'column',
           gap: '48px',
-          transform: menuOpen ? 'translateY(0)' : 'translateY(-16px)',
-          transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+          transform: menuOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <div>
@@ -146,109 +144,142 @@ export const MenuOverlay = () => {
         </div>
       </div>
 
-      {/* Coluna central — preta, preview do projeto */}
+      {/* Coluna central — fundo preto transparente, sempre visível */}
       <div
         style={{
-          background: '#050608',
+          background: 'transparent',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
           padding: '48px',
-          transform: menuOpen ? 'translateY(0)' : 'translateY(-16px)',
-          transition: 'transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)',
+          position: 'relative',
         }}
       >
-        {activeProject ? (
-          <div
-            style={{
-              textAlign: 'center',
-              transition: 'opacity 0.3s',
-            }}
-          >
-            <span
+        {/* Botão fechar — centro topo */}
+        <button
+          onClick={() => setMenuOpen(false)}
+          style={{
+            position: 'absolute',
+            top: '32px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            background: 'rgba(255,255,255,0.08)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            borderRadius: '4px',
+            padding: '10px 24px',
+            color: 'var(--text-primary)',
+            fontSize: '11px',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            cursor: 'none',
+            opacity: menuOpen ? 1 : 0,
+            transition: 'opacity 0.4s 0.4s, background 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.14)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
+        >
+          <span>✕</span>
+          <span>Fechar</span>
+        </button>
+
+        {/* Preview do projeto */}
+        <div
+          style={{
+            textAlign: 'center',
+            opacity: menuOpen ? 1 : 0,
+            transition: 'opacity 0.4s 0.3s',
+          }}
+        >
+          {activeProject ? (
+            <>
+              <span
+                style={{
+                  fontFamily: 'monospace',
+                  fontSize: '11px',
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: activeProject.accent,
+                  display: 'block',
+                  marginBottom: '16px',
+                }}
+              >
+                {activeProject.num}
+              </span>
+              <h2
+                style={{
+                  fontSize: 'clamp(40px, 5vw, 72px)',
+                  lineHeight: 0.95,
+                  letterSpacing: '-0.02em',
+                  color: 'var(--text-primary)',
+                  fontWeight: 500,
+                  marginBottom: '24px',
+                }}
+              >
+                {activeProject.name}
+              </h2>
+              <p
+                style={{
+                  fontSize: '15px',
+                  lineHeight: 1.6,
+                  color: 'var(--text-secondary)',
+                  maxWidth: '400px',
+                }}
+              >
+                {activeProject.description}
+              </p>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '8px',
+                  justifyContent: 'center',
+                  flexWrap: 'wrap',
+                  marginTop: '32px',
+                }}
+              >
+                {activeProject.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    style={{
+                      fontFamily: 'monospace',
+                      fontSize: '10px',
+                      letterSpacing: '0.08em',
+                      padding: '4px 10px',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '100px',
+                      color: 'var(--text-muted)',
+                    }}
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p
               style={{
                 fontFamily: 'monospace',
                 fontSize: '11px',
-                letterSpacing: '0.12em',
+                letterSpacing: '0.1em',
                 textTransform: 'uppercase',
-                color: activeProject.accent,
-                display: 'block',
-                marginBottom: '16px',
+                color: 'var(--text-muted)',
               }}
             >
-              {activeProject.num}
-            </span>
-            <h2
-              style={{
-                fontSize: 'clamp(40px, 5vw, 72px)',
-                lineHeight: 0.95,
-                letterSpacing: '-0.02em',
-                color: 'var(--text-primary)',
-                fontWeight: 500,
-                marginBottom: '24px',
-              }}
-            >
-              {activeProject.name}
-            </h2>
-            <p
-              style={{
-                fontSize: '15px',
-                lineHeight: 1.6,
-                color: 'var(--text-secondary)',
-                maxWidth: '400px',
-              }}
-            >
-              {activeProject.description}
+              // hover em um projeto
             </p>
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-                marginTop: '32px',
-              }}
-            >
-              {activeProject.tags.map((tag) => (
-                <span
-                  key={tag}
-                  style={{
-                    fontFamily: 'monospace',
-                    fontSize: '10px',
-                    letterSpacing: '0.08em',
-                    padding: '4px 10px',
-                    border: '1px solid var(--border-hover)',
-                    borderRadius: '100px',
-                    color: 'var(--text-muted)',
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <p
-            style={{
-              fontFamily: 'monospace',
-              fontSize: '11px',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: 'var(--text-muted)',
-            }}
-          >
-            // hover em um projeto
-          </p>
-        )}
+          )}
+        </div>
       </div>
 
-      {/* Coluna direita — offwhite, vazia por enquanto */}
+      {/* Coluna direita — entra da direita */}
       <div
         style={{
           background: '#f0ede8',
-          transform: menuOpen ? 'translateY(0)' : 'translateY(-16px)',
-          transition: 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+          transform: menuOpen ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       />
     </div >
