@@ -19,6 +19,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  cursor: none !important;
 }
 
 html {
@@ -31,4 +32,12 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+.cursor-hover {
+  width: 56px !important;
+  height: 56px !important;
+  margin-left: -28px !important;
+  margin-top: -28px !important;
+  border-color: var(--accent) !important;
 }
