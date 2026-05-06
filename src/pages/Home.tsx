@@ -2,6 +2,7 @@ import { Scene } from '../components/scene/Scene'
 import { BgOverlay } from '../components/scene/BgOverlay'
 import { Nav } from '../components/sections/Nav'
 import { HomeView } from '../components/sections/HomeView'
+import { MenuOverlay } from '../components/sections/MenuOverlay'
 
 export const Home = () => {
   return (
@@ -10,6 +11,7 @@ export const Home = () => {
       <BgOverlay />
       <Nav />
       <HomeView />
+      <MenuOverlay />
     </main>
   )
 }
