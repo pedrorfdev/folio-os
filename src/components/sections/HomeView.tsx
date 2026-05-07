@@ -4,33 +4,39 @@ import { projects } from '../../data/projects'
 export const HomeView = () => {
   const setActiveProject = usePortfolioStore((s) => s.setActiveProject)
   const setFixedProject = usePortfolioStore((s) => s.setFixedProject)
+  const setExpandedProject = usePortfolioStore((s) => s.setExpandedProject)
   const activeSlug = usePortfolioStore((s) => s.activeProjectSlug)
   const fixedSlug = usePortfolioStore((s) => s.fixedProjectSlug)
+  const expandedSlug = usePortfolioStore((s) => s.expandedProjectSlug)
 
-  // o slug "visível" é o fixado ou o em hover
-  const visibleSlug = fixedSlug ?? activeSlug
+  const visibleSlug = expandedSlug ?? fixedSlug ?? activeSlug
 
   const handlePillClick = (slug: string) => {
-    // se já está fixado nesse projeto, desfixar
     if (fixedSlug === slug) {
       setFixedProject(null)
+      setActiveProject(null)
     } else {
       setFixedProject(slug)
+      setActiveProject(slug)
     }
   }
 
   return (
     <section className="fixed inset-0 z-10 pointer-events-none">
 
-      {/* Fundo clicável — só quando tem projeto fixado */}
-      {fixedSlug && (
+      {/* Fundo clicável — reseta tudo quando expandido ou fixado */}
+      {(fixedSlug || expandedSlug) && (
         <div
           className="absolute inset-0 pointer-events-auto"
-          onClick={() => setFixedProject(null)}
+          onClick={() => {
+            setFixedProject(null)
+            setExpandedProject(null)
+            setActiveProject(null)
+          }}
         />
       )}
 
-      {/* Nome grande no centro */}
+      {/* Nome grande no centro — some quando expandido */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         {projects.map((p) => (
           <h2
@@ -38,7 +44,10 @@ export const HomeView = () => {
             className={`
               absolute font-serif leading-none tracking-tight select-none
               transition-all duration-700
-              ${visibleSlug === p.slug ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+              ${visibleSlug === p.slug && !expandedSlug
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-4'
+              }
             `}
             style={{
               fontSize: 'clamp(72px, 11vw, 148px)',
@@ -51,14 +60,17 @@ export const HomeView = () => {
         ))}
       </div>
 
-      {/* Deliverables abaixo do nome */}
+      {/* Deliverables */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         {projects.map((p) => (
           <div
             key={p.slug}
             className={`
               absolute mt-48 text-center transition-all duration-700 delay-100
-              ${visibleSlug === p.slug ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}
+              ${visibleSlug === p.slug && !expandedSlug
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-2'
+              }
             `}
           >
             <span className="font-mono text-[11px] tracking-widest uppercase text-text-muted">
@@ -73,8 +85,8 @@ export const HomeView = () => {
         {projects.map((p) => (
           <button
             key={p.slug}
-            onMouseEnter={() => { if (!fixedSlug) setActiveProject(p.slug) }}
-            onMouseLeave={() => { if (!fixedSlug) setActiveProject(null) }}
+            onMouseEnter={() => { if (!fixedSlug && !expandedSlug) setActiveProject(p.slug) }}
+            onMouseLeave={() => { if (!fixedSlug && !expandedSlug) setActiveProject(null) }}
             onClick={(e) => {
               e.stopPropagation()
               handlePillClick(p.slug)
