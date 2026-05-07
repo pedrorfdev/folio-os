@@ -1,3 +1,10 @@
+export type CardPosition = {
+  top?: string
+  bottom?: string
+  left?: string
+  right?: string
+}
+
 export type Project = {
   slug: string
   num: string
@@ -8,6 +15,8 @@ export type Project = {
   geometry: 'icosahedron' | 'octahedron' | 'torusknot' | 'dodecahedron'
   links: { label: string; url: string; primary?: boolean }[]
   meta: { label: string; value: string }[]
+  deliverables: string
+  cardPosition: CardPosition
 }
 
 export const projects: Project[] = [
@@ -19,6 +28,8 @@ export const projects: Project[] = [
     tags: ['React', 'Node.js', 'PostgreSQL'],
     accent: '#6b5fff',
     geometry: 'icosahedron',
+    deliverables: 'Product Design, Engineering',
+    cardPosition: { bottom: '48px', right: '48px' },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Sistema clínico' },
@@ -33,6 +44,8 @@ export const projects: Project[] = [
     tags: ['React', 'Node.js', 'Multi-tenant'],
     accent: '#ff5f9e',
     geometry: 'dodecahedron',
+    deliverables: 'Product Design, Engineering, Strategy',
+    cardPosition: { bottom: '48px', left: '48px' },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Produto B2B + B2C' },
@@ -47,6 +60,8 @@ export const projects: Project[] = [
     tags: ['React', 'OpenAI', 'Node.js'],
     accent: '#5fffa0',
     geometry: 'torusknot',
+    deliverables: 'Engineering, AI Integration',
+    cardPosition: { top: '48px', right: '48px' },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Produto consumer' },
@@ -61,6 +76,8 @@ export const projects: Project[] = [
     tags: ['React', 'Node.js', 'PostgreSQL'],
     accent: '#ffb45f',
     geometry: 'octahedron',
+    deliverables: 'Engineering, Product Design',
+    cardPosition: { top: '55%', right: '15%' },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Sistema interno' },
