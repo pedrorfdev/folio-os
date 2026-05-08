@@ -2,37 +2,19 @@ import { usePortfolioStore } from '../../store/portfolio.store'
 import { projects } from '../../data/projects'
 
 export const HomeView = () => {
-  const setActiveProject = usePortfolioStore((s) => s.setActiveProject)
-  const setFixedProject = usePortfolioStore((s) => s.setFixedProject)
-  const setExpandedProject = usePortfolioStore((s) => s.setExpandedProject)
-  const activeSlug = usePortfolioStore((s) => s.activeProjectSlug)
-  const fixedSlug = usePortfolioStore((s) => s.fixedProjectSlug)
-  const expandedSlug = usePortfolioStore((s) => s.expandedProjectSlug)
+  const { activeSlug, projectState, hoverProject, fixProject, clearProject } = usePortfolioStore()
 
-  const visibleSlug = expandedSlug ?? fixedSlug ?? activeSlug
-
-  const handlePillClick = (slug: string) => {
-    if (fixedSlug === slug) {
-      setFixedProject(null)
-      setActiveProject(null)
-    } else {
-      setFixedProject(slug)
-      setActiveProject(slug)
-    }
-  }
+  const visibleSlug = activeSlug
+  const isExpanded = projectState === 'expanded'
 
   return (
     <section className="fixed inset-0 z-10 pointer-events-none">
 
-      {/* Fundo clicável — reseta tudo quando expandido ou fixado */}
-      {(fixedSlug || expandedSlug) && (
+      {/* Fundo clicável — reseta quando fixed */}
+      {projectState === 'fixed' && (
         <div
           className="absolute inset-0 pointer-events-auto"
-          onClick={() => {
-            setFixedProject(null)
-            setExpandedProject(null)
-            setActiveProject(null)
-          }}
+          onClick={clearProject}
         />
       )}
 
@@ -41,18 +23,13 @@ export const HomeView = () => {
         {projects.map((p) => (
           <h2
             key={p.slug}
-            className={`
-              absolute font-serif leading-none tracking-tight select-none
-              transition-all duration-700
-              ${visibleSlug === p.slug && !expandedSlug
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-4'
-              }
-            `}
+            className="absolute font-serif leading-none tracking-tight select-none transition-all duration-700"
             style={{
               fontSize: 'clamp(72px, 11vw, 148px)',
               letterSpacing: '-0.03em',
               color: 'var(--color-text-primary)',
+              opacity: visibleSlug === p.slug && !isExpanded ? 1 : 0,
+              transform: visibleSlug === p.slug && !isExpanded ? 'translateY(0)' : 'translateY(16px)',
             }}
           >
             {p.name}
@@ -65,13 +42,12 @@ export const HomeView = () => {
         {projects.map((p) => (
           <div
             key={p.slug}
-            className={`
-              absolute mt-48 text-center transition-all duration-700 delay-100
-              ${visibleSlug === p.slug && !expandedSlug
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-2'
-              }
-            `}
+            className="absolute mt-48 text-center transition-all duration-700"
+            style={{
+              opacity: visibleSlug === p.slug && !isExpanded ? 1 : 0,
+              transform: visibleSlug === p.slug && !isExpanded ? 'translateY(0)' : 'translateY(8px)',
+              transitionDelay: '100ms',
+            }}
           >
             <span className="font-mono text-[11px] tracking-widest uppercase text-text-muted">
               {p.deliverables}
@@ -85,19 +61,25 @@ export const HomeView = () => {
         {projects.map((p) => (
           <button
             key={p.slug}
-            onMouseEnter={() => { if (!fixedSlug && !expandedSlug) setActiveProject(p.slug) }}
-            onMouseLeave={() => { if (!fixedSlug && !expandedSlug) setActiveProject(null) }}
+            onMouseEnter={() => hoverProject(p.slug)}
+            onMouseLeave={() => {
+              if (projectState === 'hover') clearProject()
+            }}
             onClick={(e) => {
               e.stopPropagation()
-              handlePillClick(p.slug)
+              if (projectState === 'fixed' && activeSlug === p.slug) {
+                clearProject()
+              } else {
+                fixProject(p.slug)
+              }
             }}
             className={`
-              text-left px-5 py-2.5 rounded-full
-              border text-[13px] font-medium tracking-wide whitespace-nowrap
-              backdrop-blur-sm transition-all duration-500
+              text-left px-5 py-2.5 rounded-full border text-[13px]
+              font-medium tracking-wide whitespace-nowrap backdrop-blur-sm
+              transition-all duration-500
               ${visibleSlug === p.slug
                 ? 'text-text-primary bg-white/10 border-white/20'
-                : 'text-text-secondary bg-white/4 border-white/8'
+                : 'text-text-secondary bg-white/[0.04] border-white/[0.08]'
               }
             `}
           >
@@ -105,7 +87,6 @@ export const HomeView = () => {
           </button>
         ))}
       </div>
-
     </section>
   )
 }

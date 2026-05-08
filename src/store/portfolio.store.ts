@@ -1,29 +1,40 @@
 import { create } from 'zustand'
 
+export type ProjectState = 'idle' | 'hover' | 'fixed' | 'expanded'
+
 type PortfolioStore = {
-  activeProjectSlug: string | null
-  fixedProjectSlug: string | null
-  expandedProjectSlug: string | null
+  activeSlug: string | null
+  projectState: ProjectState
   menuOpen: boolean
+  menuHoverSlug: string | null
   cursorX: number
   cursorY: number
-  setActiveProject: (slug: string | null) => void
-  setFixedProject: (slug: string | null) => void
-  setExpandedProject: (slug: string | null) => void
+
+  hoverProject: (slug: string) => void
+  fixProject: (slug: string) => void
+  expandProject: (slug: string) => void
+  clearProject: () => void
   setMenuOpen: (open: boolean) => void
+  setMenuHover: (slug: string | null) => void
   setCursor: (x: number, y: number) => void
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set) => ({
-  activeProjectSlug: null,
-  fixedProjectSlug: null,
-  expandedProjectSlug: null,
+  activeSlug: null,
+  projectState: 'idle',
   menuOpen: false,
+  menuHoverSlug: null,
   cursorX: 0,
   cursorY: 0,
-  setActiveProject: (slug) => set({ activeProjectSlug: slug }),
-  setFixedProject: (slug) => set({ fixedProjectSlug: slug }),
-  setExpandedProject: (slug) => set({ expandedProjectSlug: slug }),
+
+  hoverProject: (slug) => set((s) =>
+    s.projectState === 'idle' ? { activeSlug: slug, projectState: 'hover' } : s
+  ),
+  fixProject: (slug) => set({ activeSlug: slug, projectState: 'fixed' }),
+  expandProject: (slug) => set({ activeSlug: slug, projectState: 'expanded' }),
+  clearProject: () => set({ activeSlug: null, projectState: 'idle' }),
+
   setMenuOpen: (open) => set({ menuOpen: open }),
+  setMenuHover: (slug) => set({ menuHoverSlug: slug }),
   setCursor: (x, y) => set({ cursorX: x, cursorY: y }),
 }))

@@ -9,16 +9,17 @@ type GeometryType = 'icosahedron' | 'octahedron' | 'torusknot' | 'dodecahedron'
 
 const Geometry = ({ type }: { type: GeometryType }) => {
   switch (type) {
-    case 'icosahedron':  return <icosahedronGeometry args={[1.2, 1]} />
-    case 'octahedron':   return <octahedronGeometry args={[1.3, 0]} />
-    case 'torusknot':    return <torusKnotGeometry args={[0.8, 0.3, 100, 16]} />
+    case 'icosahedron': return <icosahedronGeometry args={[1.2, 1]} />
+    case 'octahedron': return <octahedronGeometry args={[1.3, 0]} />
+    case 'torusknot': return <torusKnotGeometry args={[0.8, 0.3, 100, 16]} />
     case 'dodecahedron': return <dodecahedronGeometry args={[1.1, 0]} />
   }
 }
 
 export const CrystalObject = () => {
   const meshRef = useRef<Mesh>(null)
-  const activeSlug = usePortfolioStore((s) => s.activeProjectSlug)
+  const activeSlug = usePortfolioStore((s) => s.activeSlug)
+  const cursorX = usePortfolioStore((s) => s.cursorX)
   const cursorY = usePortfolioStore((s) => s.cursorY)
 
   const activeProject = projects.find((p) => p.slug === activeSlug)

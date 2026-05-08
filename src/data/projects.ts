@@ -3,6 +3,7 @@ export type CardPosition = {
   bottom?: string
   left?: string
   right?: string
+  transformOrigin: string
 }
 
 export type Project = {
@@ -29,7 +30,7 @@ export const projects: Project[] = [
     accent: '#6b5fff',
     geometry: 'icosahedron',
     deliverables: 'Product Design, Engineering',
-    cardPosition: { bottom: '48px', right: '48px' },
+    cardPosition: { bottom: '48px', right: '48px', transformOrigin: 'bottom right' },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Sistema clínico' },
@@ -45,7 +46,7 @@ export const projects: Project[] = [
     accent: '#ff5f9e',
     geometry: 'dodecahedron',
     deliverables: 'Product Design, Engineering, Strategy',
-    cardPosition: { bottom: '48px', left: '48px' },
+    cardPosition: { bottom: '48px', left: '48px', transformOrigin: 'bottom left' },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Produto B2B + B2C' },
@@ -61,7 +62,7 @@ export const projects: Project[] = [
     accent: '#5fffa0',
     geometry: 'torusknot',
     deliverables: 'Engineering, AI Integration',
-    cardPosition: { top: '48px', right: '48px' },
+    cardPosition: { top: '48px', right: '48px', transformOrigin: 'top right' },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Produto consumer' },
@@ -77,7 +78,7 @@ export const projects: Project[] = [
     accent: '#ffb45f',
     geometry: 'octahedron',
     deliverables: 'Engineering, Product Design',
-    cardPosition: { top: '55%', right: '15%' },
+    cardPosition: { top: '55%', right: '15%', transformOrigin: 'center right' },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Sistema interno' },

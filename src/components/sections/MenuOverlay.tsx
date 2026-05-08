@@ -3,64 +3,54 @@ import { projects } from '../../data/projects'
 
 export const MenuOverlay = () => {
   const menuOpen = usePortfolioStore((s) => s.menuOpen)
-  const activeSlug = usePortfolioStore((s) => s.activeProjectSlug)
-  const setActiveProject = usePortfolioStore((s) => s.setActiveProject)
+  const menuHoverSlug = usePortfolioStore((s) => s.menuHoverSlug)
   const setMenuOpen = usePortfolioStore((s) => s.setMenuOpen)
+  const setMenuHover = usePortfolioStore((s) => s.setMenuHover)
+  const fixProject = usePortfolioStore((s) => s.fixProject)
 
-  const activeProject = projects.find((p) => p.slug === activeSlug)
+  const activeProject = projects.find((p) => p.slug === menuHoverSlug)
+
+  const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)'
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 200,
-        display: 'grid',
-        gridTemplateColumns: '1fr 2fr 1fr',
-        pointerEvents: menuOpen ? 'auto' : 'none',
-      }}
+      className="fixed inset-0 z-[200] grid pointer-events-none"
+      style={{ gridTemplateColumns: '1fr 2fr 1fr' }}
     >
-      {/* Coluna esquerda — entra da esquerda */}
+      {/* Coluna esquerda */}
       <div
+        className="flex flex-col gap-12 pointer-events-auto"
         style={{
           background: '#f0ede8',
           padding: '120px 40px 48px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '48px',
           transform: menuOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: `transform 0.8s ${EASE}`,
         }}
       >
         <div>
-          <span
-            style={{
-              fontFamily: 'monospace',
-              fontSize: '10px',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'rgba(5,6,8,0.4)',
-              display: 'block',
-              marginBottom: '16px',
-            }}
-          >
+          <span className="font-mono text-[10px] tracking-[0.12em] uppercase block mb-4"
+            style={{ color: 'rgba(5,6,8,0.4)' }}>
             // Projetos
           </span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <div className="flex flex-col gap-1">
             {projects.map((p) => (
               <button
                 key={p.slug}
                 onMouseEnter={(e) => {
-                  setActiveProject(p.slug)
+                  setMenuHover(p.slug)
                   e.currentTarget.style.transform = 'translateX(8px)'
                   e.currentTarget.style.color = '#050608'
                 }}
                 onMouseLeave={(e) => {
-                  setActiveProject(null)
+                  setMenuHover(null)
                   e.currentTarget.style.transform = 'translateX(0)'
                   e.currentTarget.style.color = 'rgba(5,6,8,0.5)'
                 }}
-                onClick={() => setMenuOpen(false)}
+                onClick={() => {
+                  fixProject(p.slug)
+                  setMenuOpen(false)
+                  setMenuHover(null)
+                }}
                 style={{
                   background: 'transparent',
                   border: 'none',
@@ -71,7 +61,7 @@ export const MenuOverlay = () => {
                   letterSpacing: '-0.02em',
                   color: 'rgba(5,6,8,0.5)',
                   cursor: 'none',
-                  transition: 'color 0.2s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                  transition: `color 0.2s, transform 0.3s ${EASE}`,
                 }}
               >
                 {p.name}
@@ -81,37 +71,19 @@ export const MenuOverlay = () => {
         </div>
 
         <div style={{ marginTop: 'auto' }}>
-          <span
-            style={{
-              fontFamily: 'monospace',
-              fontSize: '10px',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'rgba(5,6,8,0.4)',
-              display: 'block',
-              marginBottom: '16px',
-            }}
-          >
+          <span className="font-mono text-[10px] tracking-[0.12em] uppercase block mb-4"
+            style={{ color: 'rgba(5,6,8,0.4)' }}>
             // Links
           </span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div className="flex flex-col gap-2">
             {[
               { label: 'GitHub', url: 'https://github.com/pedrorfdev' },
               { label: 'LinkedIn', url: 'https://linkedin.com' },
               { label: 'Currículo ↗', url: '#' },
             ].map((link) => (
-              <a
-                key={link.label}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  fontSize: '14px',
-                  color: 'rgba(5,6,8,0.5)',
-                  textDecoration: 'none',
-                  transition: 'color 0.2s',
-                  padding: '4px 0',
-                }}
+              <a key={link.label} href={link.url} target="_blank" rel="noopener noreferrer"
+                className="text-[14px] no-underline py-1 transition-colors duration-200"
+                style={{ color: 'rgba(5,6,8,0.5)' }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = '#050608')}
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(5,6,8,0.5)')}
               >
@@ -119,169 +91,79 @@ export const MenuOverlay = () => {
               </a>
             ))}
           </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              fontSize: '12px',
-              color: 'rgba(5,6,8,0.4)',
-              marginTop: '24px',
-            }}
-          >
-            <span
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                background: '#16a34a',
-                boxShadow: '0 0 8px #16a34a',
-                animation: 'pulse 2s ease-in-out infinite',
-              }}
-            />
+          <div className="flex items-center gap-2 mt-6 text-[12px]" style={{ color: 'rgba(5,6,8,0.4)' }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-green-600"
+              style={{ boxShadow: '0 0 8px #16a34a', animation: 'pulse 2s ease-in-out infinite' }} />
             Disponível para projetos
           </div>
         </div>
       </div>
 
-      {/* Coluna central — fundo preto transparente, sempre visível */}
+      {/* Coluna central — preview */}
       <div
-        style={{
-          background: 'transparent',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: '48px',
-          position: 'relative',
-        }}
+        className="flex flex-col justify-center items-center p-12 relative pointer-events-auto"
+        style={{ background: 'transparent' }}
       >
-        {/* Botão fechar — centro topo */}
         <button
           onClick={() => setMenuOpen(false)}
+          className="absolute top-8 left-1/2 -translate-x-1/2
+                     flex items-center gap-2 px-6 py-2.5 rounded
+                     font-mono text-[11px] tracking-[0.1em] uppercase
+                     border transition-all duration-200"
           style={{
-            position: 'absolute',
-            top: '32px',
-            left: '50%',
-            transform: 'translateX(-50%)',
             background: 'rgba(255,255,255,0.08)',
-            border: '1px solid rgba(255,255,255,0.15)',
-            borderRadius: '4px',
-            padding: '10px 24px',
-            color: 'var(--text-primary)',
-            fontSize: '11px',
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            cursor: 'none',
+            borderColor: 'rgba(255,255,255,0.15)',
+            color: 'var(--color-text-primary)',
             opacity: menuOpen ? 1 : 0,
-            transition: 'opacity 0.4s 0.4s, background 0.2s',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
+            transition: `opacity 0.4s 0.4s`,
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.14)')}
-          onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
         >
           <span>✕</span>
           <span>Fechar</span>
         </button>
 
-        {/* Preview do projeto */}
-        <div
-          style={{
-            textAlign: 'center',
-            opacity: menuOpen ? 1 : 0,
-            transition: 'opacity 0.4s 0.3s',
-          }}
-        >
+        <div style={{ opacity: menuOpen ? 1 : 0, transition: 'opacity 0.4s 0.3s', textAlign: 'center' }}>
           {activeProject ? (
             <>
-              <span
-                style={{
-                  fontFamily: 'monospace',
-                  fontSize: '11px',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: activeProject.accent,
-                  display: 'block',
-                  marginBottom: '16px',
-                }}
-              >
+              <span className="font-mono text-[11px] tracking-[0.12em] uppercase block mb-4"
+                style={{ color: activeProject.accent }}>
                 {activeProject.num}
               </span>
-              <h2
-                style={{
-                  fontSize: 'clamp(40px, 5vw, 72px)',
-                  lineHeight: 0.95,
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-primary)',
-                  fontWeight: 500,
-                  marginBottom: '24px',
-                }}
-              >
+              <h2 className="font-serif leading-none mb-6"
+                style={{ fontSize: 'clamp(40px, 5vw, 72px)', letterSpacing: '-0.02em', color: 'var(--color-text-primary)' }}>
                 {activeProject.name}
               </h2>
-              <p
-                style={{
-                  fontSize: '15px',
-                  lineHeight: 1.6,
-                  color: 'var(--text-secondary)',
-                  maxWidth: '400px',
-                }}
-              >
+              <p className="text-[15px] leading-relaxed max-w-sm"
+                style={{ color: 'var(--color-text-secondary)' }}>
                 {activeProject.description}
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '8px',
-                  justifyContent: 'center',
-                  flexWrap: 'wrap',
-                  marginTop: '32px',
-                }}
-              >
+              <div className="flex gap-2 justify-center flex-wrap mt-8">
                 {activeProject.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: '10px',
-                      letterSpacing: '0.08em',
-                      padding: '4px 10px',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      borderRadius: '100px',
-                      color: 'var(--text-muted)',
-                    }}
-                  >
+                  <span key={tag} className="font-mono text-[10px] tracking-[0.08em] uppercase px-3 py-1.5 rounded-full border"
+                    style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'var(--color-text-muted)' }}>
                     {tag}
                   </span>
                 ))}
               </div>
             </>
           ) : (
-            <p
-              style={{
-                fontFamily: 'monospace',
-                fontSize: '11px',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: 'var(--text-muted)',
-              }}
-            >
+            <p className="font-mono text-[11px] tracking-[0.1em] uppercase"
+              style={{ color: 'var(--color-text-muted)' }}>
               // hover em um projeto
             </p>
           )}
         </div>
       </div>
 
-      {/* Coluna direita — entra da direita */}
+      {/* Coluna direita */}
       <div
+        className="pointer-events-auto"
         style={{
           background: '#f0ede8',
           transform: menuOpen ? 'translateX(0)' : 'translateX(100%)',
-          transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+          transition: `transform 0.8s ${EASE}`,
         }}
       />
-    </div >
+    </div>
   )
 }
