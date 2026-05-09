@@ -79,7 +79,7 @@ export const HomeView = () => {
               transition-all duration-500
               ${visibleSlug === p.slug
                 ? 'text-text-primary bg-white/10 border-white/20'
-                : 'text-text-secondary bg-white/[0.04] border-white/[0.08]'
+                : 'text-text-secondary bg-white/4 border-white/8'
               }
             `}
           >

@@ -1,6 +1,7 @@
 import { useRef, useState, useLayoutEffect } from 'react'
 import { usePortfolioStore } from '../../store/portfolio.store'
 import { projects } from '../../data/projects'
+import { VamboraAI } from '../case-studies/VamboraAi';
 
 type CardRect = { top: number; left: number; width: number; height: number }
 
@@ -12,8 +13,12 @@ const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)'
 const solidBg: Record<string, string> = {
   praxis: '#0d0b1a',
   'evento-rsvp': '#1a0b12',
-  'guia-ia': '#0b1a12',
+  'guia-ia': '#14120a',
   agro: '#1a130b',
+}
+
+const caseStudies: Record<string, React.ComponentType<{ isActive: boolean }>> = {
+  'guia-ia': VamboraAI,
 }
 
 export const ProjectPreview = () => {
@@ -63,6 +68,7 @@ export const ProjectPreview = () => {
         const isThisExpanded = isExpanded && visibleSlug === p.slug
         const rect = expandedRects[p.slug]
         const isAnimating = animating[p.slug]
+        const CaseStudyComponent = caseStudies[p.slug]
 
         const vw = typeof window !== 'undefined' ? window.innerWidth : 1440
         const vh = typeof window !== 'undefined' ? window.innerHeight : 900
@@ -129,16 +135,16 @@ export const ProjectPreview = () => {
 
             {/* Seção expandida */}
             <div
+              data-case-scroll
               className="fixed z-30 overflow-hidden"
               style={{
                 inset: 0,
-                // começa no clipFrom sem transição, depois anima pra clipTo
+                overflowY: isThisExpanded ? 'auto' : 'hidden',
                 clipPath: isThisExpanded && isAnimating ? clipTo : clipFrom,
                 transition: isThisExpanded && isAnimating
                   ? `clip-path 0.9s ${EASE}`
                   : 'none',
                 pointerEvents: isThisExpanded ? 'auto' : 'none',
-                // some completamente quando não expandido
                 visibility: isThisExpanded ? 'visible' : 'hidden',
               }}
             >
@@ -161,46 +167,49 @@ export const ProjectPreview = () => {
               />
 
               {/* Conteúdo */}
-              <div
-                className="absolute"
-                style={{
-                  top: '10%', left: '6%', right: '6%',
-                  opacity: isThisExpanded && isAnimating ? 1 : 0,
-                  transform: isThisExpanded && isAnimating ? 'translateY(0)' : 'translateY(24px)',
-                  transition: `opacity 0.4s ease 0.6s, transform 0.5s ${EASE} 0.55s`,
-                  pointerEvents: 'none',
-                }}
-              >
-                <span
-                  className="font-mono text-[11px] tracking-widest uppercase block mb-6 opacity-60"
-                  style={{ color: p.accent }}
-                >
-                  {p.num} — {p.deliverables}
-                </span>
-                <h2
-                  className="font-serif leading-none mb-8"
+              {CaseStudyComponent ? (
+                <CaseStudyComponent isActive={isThisExpanded} />
+              ) : (
+                <div
+                  className="absolute"
                   style={{
-                    fontSize: 'clamp(56px, 8vw, 120px)',
-                    letterSpacing: '-0.03em',
-                    color: 'var(--color-text-primary)',
+                    top: '10%', left: '6%', right: '6%',
+                    opacity: isThisExpanded && isAnimating ? 1 : 0,
+                    transform: isThisExpanded && isAnimating ? 'translateY(0)' : 'translateY(24px)',
+                    transition: `opacity 0.4s ease 0.6s, transform 0.5s ${EASE} 0.55s`,
+                    pointerEvents: 'none',
                   }}
                 >
-                  {p.name}
-                </h2>
-                <div className="flex gap-16 border-t border-white/10 pt-6 mb-6">
-                  {p.meta.map((m) => (
-                    <div key={m.label} className="flex flex-col gap-1">
-                      <span className="font-mono text-[10px] tracking-widest uppercase text-text-muted">
-                        {m.label}
-                      </span>
-                      <span className="text-[14px] text-text-secondary">{m.value}</span>
-                    </div>
-                  ))}
-                </div>
-                <p className="text-text-secondary text-[15px] leading-relaxed max-w-xl">
-                  {p.description}
-                </p>
-              </div>
+                  <span
+                    className="font-mono text-[11px] tracking-widest uppercase block mb-6 opacity-60"
+                    style={{ color: p.accent }}
+                  >
+                    {p.num} — {p.deliverables}
+                  </span>
+                  <h2
+                    className="font-serif leading-none mb-8"
+                    style={{
+                      fontSize: 'clamp(56px, 8vw, 120px)',
+                      letterSpacing: '-0.03em',
+                      color: 'var(--color-text-primary)',
+                    }}
+                  >
+                    {p.name}
+                  </h2>
+                  <div className="flex gap-16 border-t border-white/10 pt-6 mb-6">
+                    {p.meta.map((m) => (
+                      <div key={m.label} className="flex flex-col gap-1">
+                        <span className="font-mono text-[10px] tracking-widest uppercase text-text-muted">
+                          {m.label}
+                        </span>
+                        <span className="text-[14px] text-text-secondary">{m.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-text-secondary text-[15px] leading-relaxed max-w-xl">
+                    {p.description}
+                  </p>
+                </div>)}
 
               {/* Botão voltar */}
               <button
