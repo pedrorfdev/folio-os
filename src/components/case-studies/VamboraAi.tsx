@@ -1,34 +1,36 @@
-import { useEffect, useRef, useState } from 'react'
-
-const ACCENT = '#f5c842'
-const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)'
-const BG = '#14120a'
+import { useEffect, useState } from 'react'
+import prompt from '../../assets/case-studies-imgs/VamboraAi/prompt.png'
+import guide from '../../assets/case-studies-imgs/VamboraAi/guide.png'
 
 type FadeProps = {
   show: boolean
   delay?: number
+  direction?: 'up' | 'down' | 'left' | 'right'
   children: React.ReactNode
   className?: string
-  style?: React.CSSProperties
 }
 
-const Fade = ({ show, delay = 0, children, className = '', style }: FadeProps) => (
-  <div
-    className={className}
-    style={{
-      opacity: show ? 1 : 0,
-      transform: show ? 'translateY(0)' : 'translateY(40px)',
-      transition: `opacity 0.8s ease ${delay}s, transform 0.8s ${EASE} ${delay}s`,
-      ...style,
-    }}
-  >
-    {children}
-  </div>
-)
+const Fade = ({ show, delay = 0, direction = 'up', children, className = '' }: FadeProps) => {
+  const offStyles = {
+    up: 'opacity-0 translate-y-10',
+    down: 'opacity-0 -translate-y-10',
+    left: 'opacity-0 -translate-x-10',
+    right: 'opacity-0 translate-x-10',
+  }
+
+  return (
+    <div
+      className={`transition-[opacity,transform] duration-800 ease-[cubic-bezier(0.16,1,0.3,1)] ${show ? 'opacity-100 translate-x-0 translate-y-0' : offStyles[direction]
+        } ${className}`}
+      style={{ transitionDelay: `${delay}s` }}
+    >
+      {children}
+    </div>
+  )
+}
 
 export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
   const [show, setShow] = useState(false)
-  const scrollRef = useRef<HTMLDivElement>(null)
   const [scrollY, setScrollY] = useState(0)
 
   useEffect(() => {
@@ -38,14 +40,12 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
     } else {
       setShow(false)
       setTimeout(() => {
-        // reset scroll quando fecha
         const parent = document.querySelector('[data-case-scroll]') as HTMLElement
         if (parent) parent.scrollTop = 0
       }, 100)
     }
   }, [isActive])
 
-  // parallax — lê o scroll do pai (a seção expandida)
   useEffect(() => {
     const parent = document.querySelector('[data-case-scroll]') as HTMLElement
     if (!parent) return
@@ -54,205 +54,141 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
     return () => parent.removeEventListener('scroll', handler)
   }, [isActive])
 
+  const isHeaderFixed = scrollY > 200
+
   return (
-    <div ref={scrollRef} style={{ backgroundColor: BG, minHeight: '100vh' }}>
+    <div className="z-20 min-h-screen bg-[#080808] selection:bg-[#f5c842]/30">
 
-      {/* ─── HERO ─── */}
-      <div
-        className="relative flex flex-col justify-end overflow-hidden"
-        style={{ height: '100vh', padding: '0 80px 72px' }}
+      {/* ─── STICKY HEADER ─── */}
+      <nav
+        className={`fixed top-0 left-0 w-full z-50 flex items-center justify-between px-16 py-5 bg-[#080808]/80 backdrop-blur-md border-b border-white/5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isHeaderFixed ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+          }`}
       >
-        {/* Parallax bg glow */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `radial-gradient(ellipse at 65% 35%, ${ACCENT}18 0%, transparent 60%)`,
-            transform: `translateY(${scrollY * 0.35}px)`,
-          }}
-        />
+        <div className="flex items-center gap-2">
+          <span className="font-serif text-2xl tracking-tighter text-white">
+            vambora<span className="text-[#f5c842] italic">.ai</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-8">
+          <span className="hidden md:block font-mono text-[10px] tracking-[0.16em] uppercase text-white/40">
+            03 — Engineering · AI Integration
+          </span>
+          <a
+            href="https://github.com/pedrorfdev/vambora.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-mono text-[10px] tracking-widest uppercase text-[#f5c842] hover:opacity-60 transition-opacity"
+          >
+            GitHub ↗
+          </a>
+        </div>
+      </nav>
 
+      <div className="relative grid h-[60vh] grid-rows-[auto_1fr_auto] overflow-hidden bg-[#080808]">
+        {/* Topo — badge */}
         <Fade show={show} delay={0.05}>
-          <p
-            className="font-mono tracking-widest uppercase mb-8"
-            style={{ fontSize: '11px', color: `${ACCENT}99`, letterSpacing: '0.14em' }}
-          >
-            03 — Engineering · AI Integration · Product
-          </p>
+          <div className="pt-10 px-16">
+            <p className="font-mono text-[10px] tracking-[0.16em] uppercase text-[#f5c842]/70">
+              03 — Engineering · AI Integration · Product
+            </p>
+          </div>
         </Fade>
 
-        <Fade show={show} delay={0.12}>
-          <h1
-            className="font-serif leading-[0.88] mb-8"
-            style={{
-              fontSize: 'clamp(88px, 13vw, 180px)',
-              letterSpacing: '-0.04em',
-              color: 'var(--color-text-primary)',
-              transform: `translateY(${-scrollY * 0.12}px)`,
-            }}
-          >
-            vambora
-            <br />
-            <em style={{ color: ACCENT }}>.ai</em>
-          </h1>
-        </Fade>
+        {/* Centro — título dominante */}
+        <div className="flex flex-col justify-end px-16 pb-8">
+          <Fade show={show} delay={0.1}>
+            <h1 className="font-serif text-[clamp(96px,14vw,200px)] leading-[0.85] tracking-[-0.04em] text-white">
+              vambora
+              <em className="block text-[#f5c842] italic not-italic">
+                .ai
+              </em>
+            </h1>
+          </Fade>
+        </div>
 
+        {/* Rodapé — meta info em linha + tagline */}
         <Fade show={show} delay={0.2}>
-          <p
-            style={{
-              fontSize: 'clamp(18px, 2vw, 24px)',
-              lineHeight: 1.5,
-              color: 'var(--color-text-secondary)',
-              maxWidth: '520px',
-              marginBottom: '56px',
-            }}
-          >
-            Fala o destino, a data e o orçamento —
-            a gente monta o roteiro.
-          </p>
-        </Fade>
-
-        <Fade show={show} delay={0.28}>
-          <div
-            className="flex gap-16"
-            style={{ borderTop: `1px solid rgba(255,255,255,0.08)`, paddingTop: '32px' }}
-          >
+          <div className="grid grid-cols-5 gap-6 items-end px-16 pt-6 pb-12 border-t border-white/7">
             {[
               { label: 'Tipo', value: 'Produto consumer' },
               { label: 'Stack', value: 'React + Gemini' },
               { label: 'Status', value: 'Em construção' },
+              { label: 'GitHub', value: 'pedrorfdev/vambora.ai ↗', link: 'https://github.com/pedrorfdev/vambora.ai' },
             ].map((m) => (
               <div key={m.label}>
-                <p className="font-mono text-[10px] tracking-widest uppercase mb-1"
-                  style={{ color: 'var(--color-text-muted)' }}>
+                <p className="font-mono text-[9px] tracking-[0.14em] uppercase mb-1.5 text-white/40">
                   {m.label}
                 </p>
-                <p className="text-[14px]" style={{ color: 'var(--color-text-secondary)' }}>
-                  {m.value}
-                </p>
+                {m.link ? (
+                  <a
+                    href={m.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[13px] text-[#f5c842] transition-opacity duration-200 hover:opacity-60"
+                  >
+                    {m.value}
+                  </a>
+                ) : (
+                  <p className="text-[13px] text-white/70">
+                    {m.value}
+                  </p>
+                )}
               </div>
             ))}
-            <div>
-              <p className="font-mono text-[10px] tracking-widest uppercase mb-1"
-                style={{ color: 'var(--color-text-muted)' }}>
-                GitHub
-              </p>
-              <a
-                href="https://github.com/pedrorfdev/vambora.ai"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[14px] hover:opacity-70 transition-opacity duration-200"
-                style={{ color: ACCENT }}
-              >
-                pedrorfdev/vambora.ai ↗
-              </a>
-            </div>
+
+            {/* Tagline na última coluna */}
+            <p className="text-[13px] leading-snug text-right text-white/40">
+              Fala o destino, a data<br />e o orçamento — a gente<br />monta o roteiro.
+            </p>
           </div>
         </Fade>
-
-        {/* scroll hint */}
-        <Fade show={show} delay={0.6} className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-          <span className="font-mono text-[9px] tracking-[0.2em] uppercase"
-            style={{ color: 'rgba(255,255,255,0.2)' }}>
-            scroll
-          </span>
-          <div style={{
-            width: '1px', height: '48px',
-            background: `linear-gradient(to bottom, ${ACCENT}80, transparent)`,
-            animation: 'pulse 2s ease-in-out infinite',
-          }} />
-        </Fade>
-      </div >
+      </div>
 
       {/* ─── SCREENSHOTS ─── */}
-      < div style={{ padding: '120px 80px' }}>
+      <div className="px-20 py-[120px]">
         <Fade show={show} delay={0.1}>
-          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-16"
-            style={{ color: `${ACCENT}80` }}>
+          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-16 text-[#f5c842]/80">
             // O produto
           </p>
         </Fade>
 
         {/* Grid de prints */}
-        <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'auto auto' }}>
+        <div className="grid grid-cols-2 gap-4">
           <Fade show={show} delay={0.15}>
-            <div
-              className="rounded-2xl flex items-center justify-center"
-              style={{
-                aspectRatio: '4/3',
-                background: `linear-gradient(135deg, ${ACCENT}12, ${ACCENT}04)`,
-                border: `1px solid ${ACCENT}20`,
-              }}
-            >
-              <div className="text-center">
-                <div className="text-4xl mb-3">✈</div>
-                <p className="font-mono text-[10px] tracking-widest uppercase"
-                  style={{ color: `${ACCENT}80` }}>Tela inicial</p>
-              </div>
+            <div className="aspect-4/3 rounded-2xl flex items-center justify-center bg-linear-to-br from-[#f5c842]/12 to-[#f5c842]/4 border border-[#f5c842]/20">
+              <img src={prompt} alt='vambora-1' className='w-full h-full object-cover rounded-xl' />
             </div>
           </Fade>
 
           <Fade show={show} delay={0.2}>
-            <div
-              className="rounded-2xl flex items-center justify-center"
-              style={{
-                aspectRatio: '4/3',
-                background: `linear-gradient(135deg, ${ACCENT}08, ${ACCENT}02)`,
-                border: `1px solid ${ACCENT}15`,
-              }}
-            >
-              <div className="text-center">
-                <div className="text-4xl mb-3">🗺️</div>
-                <p className="font-mono text-[10px] tracking-widest uppercase"
-                  style={{ color: `${ACCENT}80` }}>Guia gerado</p>
-              </div>
+            <div className="aspect-4/3 rounded-2xl flex items-center justify-center bg-linear-to-br from-[#f5c842]/8 to-[#f5c842]/2 border border-[#f5c842]/15">
+              <img src={guide} alt='vambora-1' className='w-full h-full object-cover rounded-xl' />
             </div>
           </Fade>
 
           <Fade show={show} delay={0.25} className="col-span-2">
-            <div
-              className="rounded-2xl flex items-center justify-center"
-              style={{
-                aspectRatio: '21/7',
-                background: `linear-gradient(135deg, ${ACCENT}06, transparent)`,
-                border: `1px solid ${ACCENT}12`,
-              }}
-            >
+            <div className="aspect-21/7 rounded-2xl flex items-center justify-center bg-linear-to-br from-[#f5c842]/6 to-transparent border border-[#f5c842]/12">
               <div className="text-center">
-                <p className="font-mono text-[10px] tracking-widest uppercase mb-2"
-                  style={{ color: `${ACCENT}60` }}>Roteiro dia a dia</p>
-                <p className="text-[12px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                <p className="font-mono text-[10px] tracking-widest uppercase mb-2 text-[#f5c842]/60">Roteiro dia a dia</p>
+                <p className="text-[12px] text-white/20">
                   screenshot em breve
                 </p>
               </div>
             </div>
           </Fade>
         </div>
-      </div >
+      </div>
 
-      {/* ─── O PROBLEMA — texto grande como na ref ─── */}
-      < div
-        style={{
-          padding: '120px 80px',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-        }}
-      >
+      {/* ─── O PROBLEMA ─── */}
+      <div className="px-20 py-[120px] border-t border-white/6 overflow-hidden">
         <Fade show={show} delay={0.1}>
-          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-20"
-            style={{ color: `${ACCENT}80` }}>
+          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-20 text-[#f5c842]/80">
             // O problema
           </p>
         </Fade>
 
-        <Fade show={show} delay={0.15}>
-          <p
-            className="font-serif leading-tight mb-24"
-            style={{
-              fontSize: 'clamp(40px, 5.5vw, 72px)',
-              letterSpacing: '-0.025em',
-              color: 'var(--color-text-primary)',
-              maxWidth: '900px',
-            }}
-          >
+        <Fade show={show} delay={0.15} direction="up">
+          <p className="font-serif text-[clamp(40px,5.5vw,72px)] leading-tight mb-24 tracking-tight text-white max-w-[900px]">
             Planejar viagem é trabalhoso demais pra maioria das pessoas.
           </p>
         </Fade>
@@ -276,120 +212,91 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
               text: 'O resultado? A maioria viaja sem roteiro ou não viaja. A fricção do planejamento mata o desejo.',
             },
           ].map((item, i) => (
-            <Fade key={item.num} show={show} delay={0.2 + i * 0.07}>
-              <div style={{ borderTop: `1px solid rgba(255,255,255,0.08)`, paddingTop: '24px' }}>
-                <p className="font-mono text-[11px] mb-4" style={{ color: `${ACCENT}70` }}>
+            <Fade key={item.num} show={show} delay={0.2 + i * 0.1} direction={i % 2 === 0 ? 'left' : 'right'}>
+              <div className="pt-6 border-t border-white/8">
+                <p className="font-mono text-[11px] mb-4 text-[#f5c842]/70">
                   {item.num}
                 </p>
-                <p className="text-[16px] leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
+                <p className="text-[16px] leading-relaxed text-white/70">
                   {item.text}
                 </p>
               </div>
             </Fade>
           ))}
         </div>
-      </div >
+      </div>
 
       {/* ─── DEMO / VÍDEO ─── */}
-      < div style={{ padding: '120px 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="px-20 py-[120px] border-t border-white/6">
         <Fade show={show} delay={0.1}>
-          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-16"
-            style={{ color: `${ACCENT}80` }}>
+          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-16 text-[#f5c842]/80">
             // Demo
           </p>
         </Fade>
         <Fade show={show} delay={0.18}>
-          <div
-            className="w-full rounded-2xl flex items-center justify-center relative overflow-hidden"
-            style={{
-              aspectRatio: '16/9',
-              background: `radial-gradient(ellipse at 50% 50%, ${ACCENT}10 0%, ${ACCENT}02 60%, transparent 100%)`,
-              border: `1px solid ${ACCENT}15`,
-            }}
-          >
-            <div className="text-center relative z-10">
-              <button
-                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 transition-transform duration-300 hover:scale-105"
-                style={{ background: ACCENT, boxShadow: `0 0 60px ${ACCENT}40` }}
-              >
-                <span style={{ color: '#14120a', fontSize: '24px', marginLeft: '4px' }}>▶</span>
+          <div className="relative aspect-video w-full rounded-2xl flex items-center justify-center overflow-hidden border border-[#f5c842]/15 bg-[radial-gradient(ellipse_at_50%_50%,#f5c84210_0%,#f5c84202_60%,transparent_100%)]">
+            <div className="relative z-10 text-center">
+              <button className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 transition-transform duration-300 hover:scale-105 bg-[#f5c842] shadow-[0_0_60px_#f5c84240]">
+                <span className="text-[#14120a] text-2xl ml-1">▶</span>
               </button>
-              <p className="font-mono text-[10px] tracking-widest uppercase"
-                style={{ color: `${ACCENT}60` }}>
+              <p className="font-mono text-[10px] tracking-widest uppercase text-[#f5c842]/60">
                 demo em breve
               </p>
             </div>
           </div>
         </Fade>
-      </div >
+      </div>
 
-      {/* ─── DECISÕES TÉCNICAS — texto grande, editorial ─── */}
-      < div style={{ padding: '120px 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      {/* ─── DECISÕES TÉCNICAS ─── */}
+      <div className="px-20 py-[120px] border-t border-white/6 overflow-hidden">
         <Fade show={show} delay={0.1}>
-          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-20"
-            style={{ color: `${ACCENT}80` }}>
+          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-20 text-[#f5c842]/80">
             // Decisões técnicas
           </p>
         </Fade>
 
-        {
-          [
-            {
-              title: 'Gemini ao invés de GPT-4',
-              body: 'O Gemini tem performance superior em português brasileiro e custo menor por token. Para um produto consumer com roteiros longos, isso é decisivo — cada geração envolve 2–4k tokens de output.',
-            },
-            {
-              title: 'Prompt engineering estruturado',
-              body: 'O prompt não é uma instrução genérica. É um template com variáveis tipadas — destino, datas, perfil, orçamento — que garante output consistente e parseável independente do input do usuário.',
-            },
-            {
-              title: 'Streaming de resposta',
-              body: 'Em vez de esperar o modelo terminar (3–8 segundos), a resposta aparece token por token. Reduz a percepção de latência drasticamente — o usuário começa a ler enquanto o modelo ainda gera.',
-            },
-            {
-              title: 'Input em linguagem natural',
-              body: 'Sem formulário com 10 campos. O usuário escreve como falaria pra um amigo — "Floripa semana que vem, 4 dias, casal, R$1.500". O modelo interpreta o contexto e preenche o que falta.',
-            },
-          ].map((d, i) => (
-            <Fade key={d.title} show={show} delay={0.15 + i * 0.08}>
-              <div
-                className="grid gap-16 py-12"
-                style={{
-                  gridTemplateColumns: '1fr 2fr',
-                  borderTop: '1px solid rgba(255,255,255,0.06)',
-                }}
-              >
-                <h3
-                  className="font-serif leading-tight"
-                  style={{
-                    fontSize: 'clamp(28px, 3vw, 40px)',
-                    letterSpacing: '-0.02em',
-                    color: 'var(--color-text-primary)',
-                  }}
-                >
-                  {d.title}
-                </h3>
-                <p
-                  className="text-[16px] leading-relaxed self-center"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                >
-                  {d.body}
-                </p>
-              </div>
+        {[
+          {
+            title: 'Gemini ao invés de GPT-4',
+            body: 'O Gemini tem performance superior em português brasileiro e custo menor por token. Para um produto consumer com roteiros longos, isso é decisivo — cada geração envolve 2–4k tokens de output.',
+          },
+          {
+            title: 'Prompt engineering estruturado',
+            body: 'O prompt não é uma instrução genérica. É um template com variáveis tipadas — destino, datas, perfil, orçamento — que garante output consistente e parseável independente do input do usuário.',
+          },
+          {
+            title: 'Streaming de resposta',
+            body: 'Em vez de esperar o modelo terminar (3–8 segundos), a resposta aparece token por token. Reduz a percepção de latência drasticamente — o usuário começa a ler enquanto o modelo ainda gera.',
+          },
+          {
+            title: 'Input em linguagem natural',
+            body: 'Sem formulário com 10 campos. O usuário escreve como falaria pra um amigo — "Floripa semana que vem, 4 dias, casal, R$1.500". O modelo interpreta o contexto e preenche o que falta.',
+          },
+        ].map((d, i) => (
+          <div key={d.title} className="grid grid-cols-[1fr_2fr] gap-16 py-12 border-t border-white/6">
+            <Fade show={show} delay={0.15 + i * 0.1} direction="left">
+              <h3 className="font-serif text-[clamp(28px,3vw,40px)] leading-tight tracking-[-0.02em] text-white">
+                {d.title}
+              </h3>
             </Fade>
-          ))
-        }
-      </div >
+            <Fade show={show} delay={0.2 + i * 0.1} direction="right">
+              <p className="text-[16px] leading-relaxed self-center text-white/70">
+                {d.body}
+              </p>
+            </Fade>
+          </div>
+        ))}
+      </div>
+
 
       {/* ─── STACK ─── */}
-      < div style={{ padding: '120px 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div className="px-20 py-[120px] border-t border-white/6">
         <Fade show={show} delay={0.1}>
-          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-16"
-            style={{ color: `${ACCENT}80` }}>
+          <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-16 text-[#f5c842]/80">
             // Stack
           </p>
         </Fade>
-        <div className="grid grid-cols-4 gap-px" style={{ background: 'rgba(255,255,255,0.06)' }}>
+        <div className="grid grid-cols-4 gap-px bg-white/6">
           {[
             { label: 'React + Vite', desc: 'Base do produto — build rápido, DX limpo' },
             { label: 'Tailwind v4', desc: 'Estilização utilitária, zero CSS manual' },
@@ -397,42 +304,27 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
             { label: 'Streaming', desc: 'Resposta em tempo real, sem esperar o LLM terminar' },
           ].map((s, i) => (
             <Fade key={s.label} show={show} delay={0.12 + i * 0.06}>
-              <div className="flex flex-col gap-3 p-8" style={{ background: BG }}>
-                <span
-                  className="font-serif"
-                  style={{
-                    fontSize: 'clamp(20px, 2.5vw, 28px)',
-                    letterSpacing: '-0.01em',
-                    color: 'var(--color-text-primary)',
-                  }}
-                >
+              <div className="flex flex-col gap-3 p-8 bg-[#080808]">
+                <span className="font-serif text-[clamp(20px,2.5vw,28px)] tracking-[-0.01em] text-white">
                   {s.label}
                 </span>
-                <span className="text-[13px] leading-relaxed" style={{ color: 'var(--color-text-muted)' }}>
+                <span className="text-[13px] leading-relaxed text-white/40">
                   {s.desc}
                 </span>
               </div>
             </Fade>
           ))}
         </div>
-      </div >
+      </div>
 
       {/* ─── PRÓXIMOS PASSOS ─── */}
-      < div style={{ padding: '120px 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="grid gap-24" style={{ gridTemplateColumns: '1fr 1fr' }}>
+      <div className="px-20 py-[120px] border-t border-white/6">
+        <div className="grid grid-cols-2 gap-24">
           <Fade show={show} delay={0.1}>
-            <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-10"
-              style={{ color: `${ACCENT}80` }}>
+            <p className="font-mono text-[10px] tracking-[0.16em] uppercase mb-10 text-[#f5c842]/80">
               // Próximos passos
             </p>
-            <h2
-              className="font-serif leading-tight"
-              style={{
-                fontSize: 'clamp(36px, 4.5vw, 56px)',
-                letterSpacing: '-0.025em',
-                color: 'var(--color-text-primary)',
-              }}
-            >
+            <h2 className="font-serif text-[clamp(36px,4.5vw,56px)] leading-tight tracking-tight text-white">
               O produto ainda está crescendo.
             </h2>
           </Fade>
@@ -448,14 +340,10 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-5 py-5"
-                  style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+                  className="flex items-center gap-5 py-5 border-b border-white/6"
                 >
-                  <span
-                    className="shrink-0 w-1.5 h-1.5 rounded-full"
-                    style={{ background: ACCENT }}
-                  />
-                  <span className="text-[15px]" style={{ color: 'var(--color-text-secondary)' }}>
+                  <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-[#f5c842]" />
+                  <span className="text-[15px] text-white/70">
                     {item}
                   </span>
                 </div>
@@ -463,19 +351,12 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
             </div>
           </Fade>
         </div>
-      </div >
+      </div>
 
       {/* ─── FOOTER ─── */}
-      < div
-        className="flex items-center justify-between"
-        style={{
-          padding: '48px 80px',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-        }}
-      >
+      <div className="flex items-center justify-between px-20 py-12 border-t border-white/6">
         <Fade show={show} delay={0.1}>
-          <span className="font-mono text-[11px] tracking-widest uppercase"
-            style={{ color: `${ACCENT}60` }}>
+          <span className="font-mono text-[11px] tracking-widest uppercase text-[#f5c842]/60">
             vambora.ai — 2025
           </span>
         </Fade>
@@ -484,18 +365,12 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
             href="https://github.com/pedrorfdev/vambora.ai"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-6 py-3 rounded font-mono text-[11px] tracking-widest uppercase transition-opacity duration-200 hover:opacity-70"
-            style={{
-              border: `1px solid ${ACCENT}40`,
-              color: ACCENT,
-              background: `${ACCENT}10`,
-            }}
+            className="flex items-center gap-2 px-6 py-3 rounded font-mono text-[11px] tracking-widest uppercase transition-opacity duration-200 hover:opacity-70 border border-[#f5c842]/40 text-[#f5c842] bg-[#f5c842]/10"
           >
             Ver no GitHub ↗
           </a>
-        </Fade >
-      </div >
-
-    </div >
+        </Fade>
+      </div>
+    </div>
   )
 }

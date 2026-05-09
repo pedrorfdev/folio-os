@@ -14,7 +14,7 @@ export const MenuOverlay = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[200] grid pointer-events-none"
+      className="fixed inset-0 z-100 grid pointer-events-none"
       style={{ gridTemplateColumns: '1fr 2fr 1fr' }}
     >
       {/* Coluna esquerda */}
@@ -108,7 +108,7 @@ export const MenuOverlay = () => {
           onClick={() => setMenuOpen(false)}
           className="absolute top-8 left-1/2 -translate-x-1/2
                      flex items-center gap-2 px-6 py-2.5 rounded
-                     font-mono text-[11px] tracking-[0.1em] uppercase
+                     font-mono text-[11px] tracking-widest uppercase
                      border transition-all duration-200"
           style={{
             background: 'rgba(255,255,255,0.08)',
