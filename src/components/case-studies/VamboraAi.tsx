@@ -266,7 +266,7 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
         <div className="mb-24">
           <TypewriterText
             text={PROBLEMA_TEXT}
-            active={problemaRef.inView}
+            active={problemaRef.inView && show}
             className="font-serif text-[clamp(40px,5.5vw,72px)] leading-tight tracking-tight text-white block max-w-[900px]"
           />
         </div>
@@ -344,7 +344,7 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
         </div>
 
         <BlockReveal
-          inView={decisoesRef.inView}
+          inView={decisoesRef.inView && show}
           items={[
             {
               title: 'Gemini ao invés de GPT-4',
