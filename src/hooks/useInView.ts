@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export const useInView = (threshold = 0.4) => {
+export const useInView = (threshold = 0.15) => {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
 
@@ -12,16 +12,16 @@ export const useInView = (threshold = 0.4) => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
+        // entra quando aparece, sai quando desaparece por baixo
         if (entry.isIntersecting) {
           setInView(true)
-          observer.disconnect()
+        } else if (entry.boundingClientRect.top > 0) {
+          // elemento saiu por baixo (usuário scrollou pra cima)
+          setInView(false)
         }
+        // se saiu por cima (scrollou pra baixo passando), mantém visível
       },
-      {
-        threshold,
-        root,
-        rootMargin: '0px 0px -15% 0px', // só dispara quando 15% do bottom já passou
-      }
+      { threshold, root }
     )
 
     observer.observe(el)
