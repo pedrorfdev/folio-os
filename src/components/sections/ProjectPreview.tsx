@@ -5,8 +5,8 @@ import { VamboraAI } from '../case-studies/VamboraAi';
 
 type CardRect = { top: number; left: number; width: number; height: number }
 
-const CARD_W = 320
-const CARD_H = 427
+const CARD_W = 300
+const CARD_H = 400
 const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)'
 
 // cores sólidas por projeto — fundo real, sem transparência
@@ -85,52 +85,51 @@ export const ProjectPreview = () => {
             {/* Card pequeno */}
             <div
               ref={(el) => { cardRefs.current[p.slug] = el }}
-              className="fixed z-20 overflow-hidden"
+              className={`
+                fixed z-20 group cursor-pointer rounded-xl
+                transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]
+                hover:scale-[1.5] hover:delay-500
+                ${p.slug === 'guia-ia' ? 'hover:translate-x-[48px] hover:translate-y-[-48px]' : ''}
+                ${p.slug === 'praxis' ? 'hover:translate-x-[48px] hover:translate-y-[48px]' : ''}
+                ${p.slug === 'evento-rsvp' ? 'hover:translate-x-[-48px] hover:translate-y-[48px]' : ''}
+                hover:shadow-[0_40px_80px_-15px_var(--accent-glow)]
+                ${isVisible && !isThisExpanded ? 'pointer-events-auto' : 'pointer-events-none'}
+              `}
               style={{
                 ...p.cardPosition,
-                width: `${CARD_W}px`,
-                height: `${CARD_H}px`,
-                borderRadius: '12px',
+                width: `${p.cardPosition.width ?? CARD_W}px`,
+                height: `${p.cardPosition.height ?? CARD_H}px`,
                 clipPath: isVisible && !isThisExpanded
-                  ? 'inset(0% 0% 0% 0%)'
+                  ? 'inset(-100px)'
                   : 'inset(0% 100% 0% 0%)',
-                transition: `clip-path 0.7s ${EASE}`,
-                pointerEvents: isVisible && !isThisExpanded ? 'auto' : 'none',
-              }}
+                '--accent-glow': `${p.accent}66`,
+                boxShadow: isVisible && !isThisExpanded
+                  ? '0 10px 40px -10px rgba(0, 0, 0, 0.3)'
+                  : 'none',
+              } as any}
             >
-              <div
-                className="absolute inset-0"
-                style={{ backgroundColor: solidBg[p.slug] ?? '#050608' }}
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `radial-gradient(circle at 65% 25%, ${p.accent}50 0%, transparent 70%)`,
-                }}
-              />
-              <div
-                className="absolute rounded-full blur-2xl opacity-40 pointer-events-none"
-                style={{ background: p.accent, width: '140px', height: '140px', top: '25%', left: '25%' }}
-              />
-              <span
-                className="absolute top-5 left-5 font-mono text-[11px] tracking-widest uppercase opacity-50"
-                style={{ color: p.accent }}
-              >
-                {p.num}
-              </span>
-              <button
-                onClick={(e) => { e.stopPropagation(); handleExpand(p.slug) }}
-                className="absolute inset-0 group"
-              >
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              <div className="w-full h-full overflow-hidden rounded-xl relative">
+                <img src={p.coverImage} alt={p.name} className="w-full h-full object-cover" />
                 <span
-                  className="absolute bottom-4 right-4 text-lg opacity-0 group-hover:opacity-100
-                             translate-y-1 group-hover:translate-y-0 transition-all duration-300"
+                  className="absolute top-5 left-5 font-mono text-[11px] tracking-widest uppercase opacity-50"
                   style={{ color: p.accent }}
                 >
-                  ↗
+                  {p.num}
                 </span>
-              </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleExpand(p.slug) }}
+                  className="absolute inset-0"
+                >
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 group-hover:delay-500 transition-colors duration-500" />
+                  <span
+                    className="absolute bottom-4 right-4 text-lg opacity-0 group-hover:opacity-100 group-hover:delay-500
+                               translate-y-1 group-hover:translate-y-0 transition-all duration-300"
+                    style={{ color: p.accent }}
+                  >
+                    ↗
+                  </span>
+                </button>
+              </div>
             </div>
 
             {/* Seção expandida */}
@@ -142,7 +141,7 @@ export const ProjectPreview = () => {
                 overflowY: isThisExpanded ? 'auto' : 'hidden',
                 clipPath: isThisExpanded && isAnimating ? clipTo : clipFrom,
                 transition: isThisExpanded && isAnimating
-                  ? `clip-path 0.9s ${EASE}`
+                  ? `clip-path 1.2s ${EASE}`
                   : 'none',
                 pointerEvents: isThisExpanded ? 'auto' : 'none',
                 visibility: isThisExpanded ? 'visible' : 'hidden',

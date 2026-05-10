@@ -1,10 +1,15 @@
+import promptImg from '../assets/case-studies-imgs/VamboraAi/prompt.png'
+
 export type CardPosition = {
   top?: string
   bottom?: string
   left?: string
   right?: string
   transformOrigin: string
+  width?: number
+  height?: number
 }
+
 
 export type Project = {
   slug: string
@@ -18,6 +23,7 @@ export type Project = {
   meta: { label: string; value: string }[]
   deliverables: string
   cardPosition: CardPosition
+  coverImage?: string
 }
 
 export const projects: Project[] = [
@@ -46,7 +52,7 @@ export const projects: Project[] = [
     accent: '#ff5f9e',
     geometry: 'dodecahedron',
     deliverables: 'Product Design, Engineering, Strategy',
-    cardPosition: { bottom: '48px', left: '48px', transformOrigin: 'bottom left' },
+    cardPosition: { bottom: '48px', left: '48px', transformOrigin: 'bottom left', width: 340, height: 340 },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Produto B2B + B2C' },
@@ -71,6 +77,7 @@ export const projects: Project[] = [
       { label: 'Stack', value: 'React + Gemini' },
       { label: 'Status', value: 'Em construção' },
     ],
+    coverImage: promptImg,
   },
   {
     slug: 'agro',
@@ -81,7 +88,7 @@ export const projects: Project[] = [
     accent: '#ffb45f',
     geometry: 'octahedron',
     deliverables: 'Engineering, Product Design',
-    cardPosition: { top: '55%', right: '15%', transformOrigin: 'center right' },
+    cardPosition: { top: '55%', right: '15%', transformOrigin: 'center right', width: 340, height: 340 },
     links: [{ label: 'Ver projeto', url: '#', primary: true }],
     meta: [
       { label: 'Tipo', value: 'Sistema interno' },

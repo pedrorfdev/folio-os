@@ -46,7 +46,7 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
   const [show, setShow] = useState(false)
   const [scrollY, setScrollY] = useState(0)
 
-  const produtoRef = useInView(0.2)
+  const produtoRef = useInView(0.05)
   const problemaRef = useInView(0.25)
   const demoRef = useInView(0.2)
   const decisoesRef = useInView(0.1)
@@ -105,7 +105,7 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
       </nav>
 
       {/* ── HERO ── */}
-      <div className="relative grid h-[60vh] grid-rows-[auto_1fr_auto] bg-[#080808]">
+      <div className="relative grid h-[60vh] grid-rows-[auto_1fr_auto] bg-[#080808] pt-20">
         <div
           className="pt-10 px-16 transition-[opacity,transform] duration-700"
           style={{ opacity: show ? 1 : 0, transform: show ? 'none' : 'translateY(-12px)', transitionDelay: '0.05s' }}
@@ -171,67 +171,73 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
       </div>
 
       {/* ── SCREENSHOTS — 3D hover ── */}
-      <div ref={produtoRef.ref} className="px-20 py-[120px]">
-        <p
-          className="font-mono text-[10px] tracking-[0.16em] uppercase mb-16 text-[#f5c842]/80"
-          style={{
-            opacity: produtoRef.inView ? 1 : 0,
-            transform: produtoRef.inView ? 'none' : 'translateX(-20px)',
-            transition: `all 0.6s ${EASE}`,
-          }}
-        >
+      <div ref={produtoRef.ref} className="px-20 py-32 border-t border-white/6">
+        <p className={`
+            font-mono text-[10px] tracking-[0.16em] uppercase mb-16 text-[#f5c842]/80
+            transition-[opacity,transform] duration-500
+            ${produtoRef.inView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-5'}
+        `}>
           // O produto
         </p>
 
         <div className="grid grid-cols-2 gap-4">
-          {/* Foto 1 — entra da esquerda */}
-          <div
-            style={{
-              opacity: produtoRef.inView ? 1 : 0,
-              transform: produtoRef.inView ? 'none' : 'translateX(-40px)',
-              transition: `all 0.8s ${EASE} 0.1s`,
-            }}
-          >
+
+          {/* Foto 1 */}
+          <div className={`
+            transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+            ${produtoRef.inView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}
+          `} style={{ transitionDelay: '0.1s' }}>
             <div
               ref={foto1.ref}
               onMouseMove={foto1.onMove}
               onMouseLeave={foto1.onLeave}
-              className="aspect-4/3 rounded-2xl overflow-hidden border border-[#f5c842]/20 cursor-none"
-              style={{ transition: `transform 0.4s ${EASE}`, willChange: 'transform' }}
+              className="w-full rounded-2xl overflow-hidden border border-[#f5c842]/20 cursor-none"
+              style={{
+                aspectRatio: '4/3',
+                transition: `transform 0.4s ${EASE}`,
+                willChange: 'transform',
+              }}
             >
               <img src={prompt} alt="vambora tela inicial" className="w-full h-full object-cover" />
             </div>
           </div>
 
-          {/* Foto 2 — entra da direita */}
-          <div
-            style={{
-              opacity: produtoRef.inView ? 1 : 0,
-              transform: produtoRef.inView ? 'none' : 'translateX(40px)',
-              transition: `all 0.8s ${EASE} 0.2s`,
-            }}
-          >
+          {/* Foto 2 */}
+          <div className={`
+            transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+            ${produtoRef.inView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}
+          `} style={{ transitionDelay: '0.2s' }}>
             <div
               ref={foto2.ref}
               onMouseMove={foto2.onMove}
               onMouseLeave={foto2.onLeave}
-              className="aspect-4/3 rounded-2xl overflow-hidden border border-[#f5c842]/15 cursor-none"
-              style={{ transition: `transform 0.4s ${EASE}`, willChange: 'transform' }}
+              className="w-full rounded-2xl overflow-hidden border border-[#f5c842]/15 cursor-none"
+              style={{
+                aspectRatio: '4/3',
+                transition: `transform 0.4s ${EASE}`,
+                willChange: 'transform',
+              }}
             >
               <img src={guide} alt="vambora guia gerado" className="w-full h-full object-cover" />
             </div>
           </div>
 
-          {/* Banner wide — scale in */}
+          {/* Banner wide */}
           <div
-            className="col-span-2"
-            style={{
-              opacity: produtoRef.inView ? 1 : 0,
-              transform: produtoRef.inView ? 'scale(1)' : 'scale(0.96)',
-              transition: `all 0.7s ${EASE} 0.3s`,
-            }}
+            className={`
+              col-span-2
+              transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
+              ${produtoRef.inView ? 'opacity-100 scale-100' : 'opacity-0 scale-[0.96]'}
+            `}
+            style={{ transitionDelay: '0.3s' }}
           >
-            <div className="aspect-[21/7] rounded-2xl flex items-center justify-center border border-[#f5c842]/12 bg-gradient-to-br from-[#f5c842]/6 to-transparent">
+            <div
+              className="w-full rounded-2xl flex items-center justify-center border border-[#f5c842]/12"
+              style={{
+                aspectRatio: '21/7',
+                background: 'rgba(245,200,66,0.04)',
+              }}
+            >
               <div className="text-center">
                 <p className="font-mono text-[10px] tracking-widest uppercase mb-2 text-[#f5c842]/60">
                   Roteiro dia a dia
@@ -240,6 +246,7 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
