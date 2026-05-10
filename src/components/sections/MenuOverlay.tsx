@@ -22,7 +22,7 @@ export const MenuOverlay = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[200] grid"
+      className="fixed inset-0 z-200 grid"
       style={{ gridTemplateColumns: '1fr 2fr 1fr', pointerEvents: 'none' }}
     >
       {/* Coluna esquerda */}

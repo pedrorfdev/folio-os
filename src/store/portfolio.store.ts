@@ -3,6 +3,8 @@ import { create } from 'zustand'
 export type ProjectState = 'idle' | 'hover' | 'fixed' | 'expanded'
 
 type PortfolioStore = {
+  activeProjectSlug: any
+  setActiveProject: any
   activeSlug: string | null
   projectState: ProjectState
   menuOpen: boolean
@@ -20,6 +22,8 @@ type PortfolioStore = {
 }
 
 export const usePortfolioStore = create<PortfolioStore>((set) => ({
+  activeProjectSlug: null,
+  setActiveProject: () => { },
   activeSlug: null,
   projectState: 'idle',
   menuOpen: false,

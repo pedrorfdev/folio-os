@@ -19,7 +19,6 @@ const Geometry = ({ type }: { type: GeometryType }) => {
 export const CrystalObject = () => {
   const meshRef = useRef<Mesh>(null)
   const activeSlug = usePortfolioStore((s) => s.activeSlug)
-  const cursorX = usePortfolioStore((s) => s.cursorX)
   const cursorY = usePortfolioStore((s) => s.cursorY)
 
   const activeProject = projects.find((p) => p.slug === activeSlug)

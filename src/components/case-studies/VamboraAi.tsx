@@ -80,7 +80,7 @@ export const VamboraAI = ({ isActive }: { isActive: boolean }) => {
   const isHeaderFixed = scrollY > 200
 
   // helper de transição inline
-  const t = (delay = 0) => ({ transition: `all 0.7s ${EASE} ${delay}s` })
+  //const t = (delay = 0) => ({ transition: `all 0.7s ${EASE} ${delay}s` })
 
   return (
     <div className="min-h-screen bg-[#080808] selection:bg-[#f5c842]/30">

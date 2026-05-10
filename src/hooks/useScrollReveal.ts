@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export const useScrollReveal = (itemCount: number, staggerMs = 120) => {
+export const useScrollReveal = (itemCount: number) => {
   const ref = useRef<HTMLDivElement>(null)
   const [visibleCount, setVisibleCount] = useState(0)
 
